@@ -1,3 +1,4 @@
-## 0.0.1
+## 1.0.0+2
 
-* TODO: Describe initial release.
+* Add notifications desktop/apps
+* Remove unused packages (mbtools loop inclusions)

@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:local_notifier/local_notifier.dart';
-import 'package:mbtools/mbtools.dart';
+
+import '../../config/config.dart';
 
 ///
 /// Objet de gestion des notifications sur le desktop
@@ -28,7 +29,7 @@ class DesktopNotifications {
     }
 
     await localNotifier.setup(
-      appName: ToolsConfigApp.appName.replaceAll(" ", "_"),
+      appName: NotificationToolsConfigApp.appName.replaceAll(" ", "_"),
       shortcutPolicy: ShortcutPolicy.requireCreate,
     );
     _isSetupOk = true;
@@ -65,9 +66,7 @@ class DesktopNotifications {
     final List<LocalNotificationAction> listActions = [];
     if (actions != null) {
       for (String a in actions) {
-        listActions.add(LocalNotificationAction(
-          text: a,
-        ));
+        listActions.add(LocalNotificationAction(text: a));
       }
     }
 
@@ -82,16 +81,16 @@ class DesktopNotifications {
 
     // configuration des listeners
     notification.onShow = () {
-      ToolsConfigApp.logger
-          .t("[Notification #${notification.identifier}] show");
+      debugPrint("[Notification #${notification.identifier}] show");
       if (onNotificationShow != null) {
         onNotificationShow();
       }
     };
 
     notification.onClose = (closeReason) {
-      ToolsConfigApp.logger.t(
-          "[Notification #${notification.identifier}] closing with reason: $closeReason");
+      debugPrint(
+        "[Notification #${notification.identifier}] closing with reason: $closeReason",
+      );
 
       // Supprime les notifications correspondant à l'identifiant
       _notificationsList.removeWhere(
@@ -105,16 +104,16 @@ class DesktopNotifications {
     };
 
     notification.onClick = () {
-      ToolsConfigApp.logger
-          .t("[Notification #${notification.identifier}] user clicked");
+      debugPrint("[Notification #${notification.identifier}] user clicked");
       if (onNotificationClick != null) {
         onNotificationClick();
       }
     };
 
     notification.onClickAction = (id) {
-      ToolsConfigApp.logger.t(
-          "[Notification #${notification.identifier}] user action clicked: $id");
+      debugPrint(
+        "[Notification #${notification.identifier}] user action clicked: $id",
+      );
       if (onNotificationClickAction != null) {
         onNotificationClickAction(id);
       }
@@ -127,8 +126,7 @@ class DesktopNotifications {
     waitBeforeShow ??= Duration.zero;
     Timer(waitBeforeShow, () async {
       // log
-      ToolsConfigApp.logger
-          .t("[Notification #${notification.identifier}] call show()");
+      debugPrint("[Notification #${notification.identifier}] call show()");
 
       // affichage
       await notification.show();

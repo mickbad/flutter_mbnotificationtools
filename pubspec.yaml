@@ -1,6 +1,6 @@
 name: mbnotificationtools
 description: "Notifications Flutter easy point."
-version: 1.0.0
+version: 1.0.0+2
 homepage: https://www.ricochets.dev
 
 environment:
@@ -10,12 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # librairie ricochets.dev
-  mbtools:
-    git:
-      url: https://github.com/mickbad/flutter_mbtools.git
-      ref: 1.2.15+1
 
   # notifications
   flutter_local_notifications: ^19.5.0

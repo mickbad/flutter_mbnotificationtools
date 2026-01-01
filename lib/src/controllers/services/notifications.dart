@@ -9,7 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:local_notifier/local_notifier.dart';
-import 'package:mbtools/mbtools.dart';
+
+import '../../config/config.dart';
 
 class ReceivedNotification {
   ReceivedNotification({
@@ -56,23 +57,26 @@ class mbNotifications {
         AndroidInitializationSettings(iconMaster);
     const DarwinInitializationSettings initializationSettingsDarwin =
         const DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      // onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+          // onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+        );
     const LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open notification');
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsDarwin,
-            macOS: initializationSettingsDarwin,
-            linux: initializationSettingsLinux);
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+          macOS: initializationSettingsDarwin,
+          linux: initializationSettingsLinux,
+        );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+    );
 
     /*
     final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
@@ -140,12 +144,17 @@ class mbNotifications {
   } // fin de la fonction notifications()
 
   void onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) {
+    int id,
+    String? title,
+    String? body,
+    String? payload,
+  ) {
     debugPrint('3-notification payload: $payload');
   }
 
   void onDidReceiveNotificationResponse(
-      NotificationResponse notificationResponse) async {
+    NotificationResponse notificationResponse,
+  ) async {
     // final String? payload = notificationResponse.payload;
     if (notificationResponse.payload != null) {
       // debugPrint('1-notification payload: $payload');
@@ -162,7 +171,7 @@ class mbNotifications {
     if (payload.isNotEmpty) {
       // print('2-notification payload: ' + payload);
     }
-/*
+    /*
     await Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
@@ -173,7 +182,10 @@ class mbNotifications {
   // ---------------------------------------------------------------------------
   // envoi d'une notification basique
   Future<void> sendBasicMessage(
-      String title, String description, String payload) async {
+    String title,
+    String description,
+    String payload,
+  ) async {
     if (Platform.isWindows || Platform.isLinux) {
       // envoi vers la notification windows
       await sendBasicMessageWindows(title, description, payload);
@@ -185,18 +197,24 @@ class mbNotifications {
 
       AndroidNotificationDetails androidPlatformChannelSpecifics =
           AndroidNotificationDetails(
-              '${ToolsConfigApp.appName.replaceAll(" ", "")}ID',
-              ToolsConfigApp.appName,
-              channelDescription: '${ToolsConfigApp.appName} Notification',
-              importance: Importance.max,
-              priority: Priority.high,
-              ticker: 'ticker');
+            '${NotificationToolsConfigApp.appName.replaceAll(" ", "")}ID',
+            NotificationToolsConfigApp.appName,
+            channelDescription:
+                '${NotificationToolsConfigApp.appName} Notification',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker',
+          );
       NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
       );
       await flutterLocalNotificationsPlugin.show(
-          0, title, description, platformChannelSpecifics,
-          payload: payload);
+        0,
+        title,
+        description,
+        platformChannelSpecifics,
+        payload: payload,
+      );
 
       debugPrint("-- sendBasicMessage End");
     } catch (e) {
@@ -205,10 +223,13 @@ class mbNotifications {
   } // fin de la fonction sendBasicMessage()
 
   Future<void> sendBasicMessageWindows(
-      String title, String description, String payload) async {
+    String title,
+    String description,
+    String payload,
+  ) async {
     // Add in main method.
     await localNotifier.setup(
-      appName: ToolsConfigApp.appName,
+      appName: NotificationToolsConfigApp.appName,
       shortcutPolicy: ShortcutPolicy.requireCreate,
     );
 
